@@ -783,8 +783,12 @@ public class Pitch {
                 maximum = fright;
             
         } else {
+            
+            
             for (i = imin; i <= imax; i++) {
+
                 double fmid = getValueAtSample(i, ilevel, unit);
+                System.err.println("STEP 3("+i+"): "+fmid);
                 if (!NUMUtils.defined(fmid)) {
                     continue;
                 }
@@ -798,6 +802,8 @@ public class Pitch {
                      */
                     double fleft = i <= 0 ? NUMundefined : getValueAtSample(i - 1, ilevel, unit);
                     double fright = i >= this.n-1 ? NUMundefined : getValueAtSample(i + 1, ilevel, unit);
+                    System.err.println("\t Interpolating: "+fleft+" "+fright);
+                    
                     if (!NUMUtils.defined(fleft) || !NUMUtils.defined(fright)) {
                         if (fmid > maximum)
                             maximum = fmid;
@@ -815,6 +821,7 @@ public class Pitch {
                         }
                         
                     }
+                    System.err.println("\t max: "+maximum);
                 }
             }
             
