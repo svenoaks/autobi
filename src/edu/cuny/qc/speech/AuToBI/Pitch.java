@@ -770,7 +770,7 @@ public class Pitch {
         imax = tri2.second;
         
         System.err.println("STEP 2: "+tri2.third+" "+imin+" "+imax);
-        if (tri.third==0) {
+        if (tri2.third==0) {
             /*
              * No sample centres between tmin and tmax.
              * Try to return the greater of the values at these two points.
@@ -868,7 +868,7 @@ public class Pitch {
         Triple <Integer, Integer, Integer> tri2 = SampledUtils.getWindowSamples(this.x1,this.dx,this.n,xmin,xmax);
         imin = tri2.first;
         imax = tri2.second;
-        if (tri.third==0) {
+        if (tri2.third==0) {
             /*
              * No sample centres between tmin and tmax.
              * Try to return the greater of the values at these two points.
@@ -927,7 +927,7 @@ public class Pitch {
                 }
             }
         }
-        if (minimum == 1e301) {
+        if (minimum == Double.MAX_VALUE) {
             minimum = NUMundefined;
         }
         
