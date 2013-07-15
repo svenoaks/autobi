@@ -307,31 +307,30 @@ public class PointProcess {
     }
     
     public Triple<Integer,Integer,Integer> getWindowPoints (double tmin, double tmax) {
-	int imin = getHighIndex (tmin);
-	int imax = getLowIndex (tmax);
+        int imin = getHighIndex (tmin);
+        int imax = getLowIndex (tmax);
         return new Triple(imax-imin+1,imin,imax);
-	
     }
     
     public int getNumberOfPeriods (double tmin, double tmax,
             double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
     {
         int imin, imax, numberOfPeriods, i;
-	if (tmax <= tmin){tmin = this.xmin; tmax =this.xmax;}   /* Autowindowing. */
-	Triple<Integer,Integer,Integer> tri = getWindowPoints (tmin, tmax);
+        if (tmax <= tmin){tmin = this.xmin; tmax =this.xmax;}   /* Autowindowing. */
+        Triple<Integer,Integer,Integer> tri = getWindowPoints (tmin, tmax);
         numberOfPeriods = tri.first-1;
         imin = tri.second;
         imax = tri.third;
         
-	if (numberOfPeriods < 1) return 0;
-	for (i = imin; i < imax; i ++) {
-		if (isPeriod (i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
-			//(void) 0;   /* This interval counts as a period. */
-		} else {
-			numberOfPeriods --;   /* This interval does not count as a period. */
-		}
-	}
-	return numberOfPeriods;
+        if (numberOfPeriods < 1) return 0;
+        for (i = imin; i < imax; i ++) {
+            if (isPeriod (i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
+                //(void) 0;   /* This interval counts as a period. */
+            } else {
+                numberOfPeriods --;   /* This interval does not count as a period. */
+            }
+        }
+        return numberOfPeriods;
     }
     
     
@@ -405,23 +404,23 @@ public class PointProcess {
     
     public double getMeanPeriod (double tmin, double tmax, double minimumPeriod, double maximumPeriod, double maximumPeriodFactor){
         
-	if (tmax <= tmin){tmin = this.xmin; tmax = this.xmax;}   /* Autowindowing. */
+        if (tmax <= tmin){tmin = this.xmin; tmax = this.xmax;}   /* Autowindowing. */
 	
-	Triple<Integer,Integer,Integer> tri = getWindowPoints (tmin, tmax);
+        Triple<Integer,Integer,Integer> tri = getWindowPoints (tmin, tmax);
         int numberOfPeriods = tri.first - 1;
         int imin = tri.second;
         int imax = tri.third;
         
-	if (numberOfPeriods < 1) return Pitch.NUMundefined;
-	double sum = 0.0;
-	for (int i = imin; i < imax; i ++) {
-		if (isPeriod (i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
-			sum += this.t [i + 1] - this.t [i];   /* This interval counts as a period. */
-		} else {
-			numberOfPeriods --;   /* This interval does not count as a period. */
-		}
-	}
-	return numberOfPeriods > 0 ? sum / numberOfPeriods : Pitch.NUMundefined;
+        if (numberOfPeriods < 1) return Pitch.NUMundefined;
+        double sum = 0.0;
+        for (int i = imin; i < imax; i ++) {
+            if (isPeriod (i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
+                sum += this.t [i + 1] - this.t [i];   /* This interval counts as a period. */
+            } else {
+                numberOfPeriods --;   /* This interval does not count as a period. */
+            }
+        }
+        return numberOfPeriods > 0 ? sum / numberOfPeriods : Pitch.NUMundefined;
     }
     
     public double getStdevPeriod (double tmin, double tmax, double minimumPeriod, double maximumPeriod, double maximumPeriodFactor){

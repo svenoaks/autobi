@@ -746,10 +746,8 @@ public class Pitch {
         double maximum = Double.MIN_VALUE;
        
         
-        System.err.println("STEP 0: "+xmin+" "+xmax+" "+ilevel+" "+unit+" "+interpolate);
         if (!NUMUtils.defined(xmin) || !NUMUtils.defined(xmax)) {
             maximum =  NUMundefined;
-            System.err.println("OUT");            
             return maximum;
         }
         
@@ -758,9 +756,7 @@ public class Pitch {
         Triple<Boolean, Double, Double> tri = NUMUtils.Function_intersectRangeWithDomain(contour,xmin,xmax);
         xmin = tri.second;
         xmax = tri.third;
-        System.err.println("STEP 1: "+tri.first+" "+xmin+" "+xmax);
         if (!tri.first) {
-            System.err.println("OUT");
             maximum = NUMundefined;   // requested range and logical domain do not intersect
             return maximum;
         }
@@ -769,7 +765,6 @@ public class Pitch {
         imin = tri2.first;
         imax = tri2.second;
         
-        System.err.println("STEP 2: "+tri2.third+" "+imin+" "+imax);
         if (tri2.third==0) {
             /*
              * No sample centres between tmin and tmax.
@@ -788,7 +783,6 @@ public class Pitch {
             for (i = imin; i <= imax; i++) {
 
                 double fmid = getValueAtSample(i, ilevel, unit);
-                System.err.println("STEP 3("+i+"): "+fmid);
                 if (!NUMUtils.defined(fmid)) {
                     continue;
                 }
@@ -802,7 +796,6 @@ public class Pitch {
                      */
                     double fleft = i <= 0 ? NUMundefined : getValueAtSample(i - 1, ilevel, unit);
                     double fright = i >= this.n-1 ? NUMundefined : getValueAtSample(i + 1, ilevel, unit);
-                    System.err.println("\t Interpolating: "+fleft+" "+fright);
                     
                     if (!NUMUtils.defined(fleft) || !NUMUtils.defined(fright)) {
                         if (fmid > maximum)
@@ -821,7 +814,6 @@ public class Pitch {
                         }
                         
                     }
-                    System.err.println("\t max: "+maximum);
                 }
             }
             
@@ -840,12 +832,8 @@ public class Pitch {
         }
         
         if (maximum == Double.MIN_VALUE) {
-            System.err.println("DIDN'T FIND MAXIMUM");
             maximum = NUMundefined;
         }
-        System.err.println("FOUND MAXIMUM "+maximum);
-        
-        
         
         return maximum;
     }
