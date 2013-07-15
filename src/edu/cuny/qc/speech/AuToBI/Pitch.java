@@ -743,11 +743,13 @@ public class Pitch {
     public double getMaximum(double xmin, double xmax, int ilevel, int unit, int interpolate) {
         int imin, imax, i;
         
-        double maximum = -1e301;
+        double maximum = Double.MIN_VALUE;
        
-
+        
+        System.err.println("STEP 0: "+xmin+" "+xmax+" "+ilevel+" "+unit+" "+interpolate);
         if (!NUMUtils.defined(xmin) || !NUMUtils.defined(xmax)) {
             maximum =  NUMundefined;
+            System.err.println("OUT");            
             return maximum;
         }
         
@@ -756,9 +758,9 @@ public class Pitch {
         Triple<Boolean, Double, Double> tri = NUMUtils.Function_intersectRangeWithDomain(contour,xmin,xmax);
         xmin = tri.second;
         xmax = tri.third;
-        
+        System.err.println("STEP 1: "+tri.first+" "+xmin+" "+xmax);
         if (!tri.first) {
-            
+            System.err.println("OUT");
             maximum = NUMundefined;   // requested range and logical domain do not intersect
             return maximum;
         }
@@ -766,6 +768,8 @@ public class Pitch {
         Triple <Integer, Integer, Integer> tri2 = SampledUtils.getWindowSamples(this.x1,this.dx,this.n,xmin,xmax);
         imin = tri2.first;
         imax = tri2.second;
+        
+        System.err.println("STEP 1: "+tri.third+" "+imin+" "+imax);
         if (tri.third==0) {
             /*
              * No sample centres between tmin and tmax.
@@ -829,6 +833,7 @@ public class Pitch {
         }
         
         if (maximum == -1e301) {
+            System.err.println("DIDN'T FIND MAXIMUM");
             maximum = NUMundefined;
         }
         
@@ -839,7 +844,8 @@ public class Pitch {
     public double getMinimum(double xmin, double xmax, int ilevel, int unit, int interpolate) {
         int imin, imax, i;
         
-        double minimum = 1e301;
+        double minimum = Double.MAX_VALUE;
+        
         if (Double.isNaN(xmin) || Double.isNaN(xmax)) {
             minimum  = NUMundefined;
             
