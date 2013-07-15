@@ -769,7 +769,7 @@ public class Pitch {
         imin = tri2.first;
         imax = tri2.second;
         
-        System.err.println("STEP 1: "+tri.third+" "+imin+" "+imax);
+        System.err.println("STEP 2: "+tri2.third+" "+imin+" "+imax);
         if (tri.third==0) {
             /*
              * No sample centres between tmin and tmax.
@@ -832,10 +832,13 @@ public class Pitch {
             }
         }
         
-        if (maximum == -1e301) {
+        if (maximum == Double.MIN_VALUE) {
             System.err.println("DIDN'T FIND MAXIMUM");
             maximum = NUMundefined;
         }
+        System.err.println("FOUND MAXIMUM "+maximum);
+        
+        
         
         return maximum;
     }
