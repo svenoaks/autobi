@@ -1013,7 +1013,7 @@ public class PitchExtractor extends SampledDataAnalyzer {
      * @return sinewave interpolation value
      */
     private double interpolateSinc(NegativeSymmetricList r, int offset, int nx, double x, int depth) {
-        System.err.println(r.size() + " " + offset + " " + nx +" " + x +" " + depth);
+        //System.err.println(r.size() + " " + offset + " " + nx +" " + x +" " + depth);
         int ix, midleft = (int) Math.floor(x);
         int midright = midleft + 1, left, right;
         double result = 0.0, a, halfsina, aa, daa, cosaa;
