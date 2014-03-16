@@ -49,6 +49,7 @@ public class PitchExtractor extends SampledDataAnalyzer {
     private final static int NUM_PEAK_INTERPOLATE_CUBIC = 2;
     private final static int NUM_PEAK_INTERPOLATE_SINC70 = 3;
     private final static int NUM_PEAK_INTERPOLATE_SINC700 = 4;
+    
     private final static int Pitch_LEVEL_FREQUENCY = 0;
     private final static int Pitch_LEVEL_STRENGTH = 1;
     private final static int kPitch_unit_HERTZ = 0;
@@ -96,7 +97,7 @@ public class PitchExtractor extends SampledDataAnalyzer {
 
         // Default min and max pitch values.
         double min_pitch = 50;
-        double max_pitch = 400;
+        double max_pitch = 500;
         return soundToPitch(0.01, min_pitch, max_pitch);
     }
 
@@ -380,6 +381,7 @@ public class PitchExtractor extends SampledDataAnalyzer {
             int leftSample = (int) Math.floor((t - wav.t0) / wav.getFrameSize()) + 1;
             int rightSample = leftSample + 1;
             int startSample, endSample;
+            
 
             double localMean[] = new double[wav.numberOfChannels];
             
@@ -388,8 +390,8 @@ public class PitchExtractor extends SampledDataAnalyzer {
                  * Compute the local mean; look one longest period to both sides.
                  */
 
-                startSample = rightSample - nsamp_period;
-                endSample = leftSample + nsamp_period;
+                startSample = Math.max(0,rightSample - nsamp_period);
+                endSample = Math.min(wav.getNumSamples(),leftSample + nsamp_period);
 
                 localMean[channel - 1] = 0.0;
                 for (i = startSample; i <= endSample; i++) {
@@ -401,8 +403,8 @@ public class PitchExtractor extends SampledDataAnalyzer {
                  * Copy a window to a frame and subtract the local mean.
                  * We are going to kill the DC component before windowing.
                  */
-                startSample = rightSample - halfnsamp_window;
-                endSample = leftSample + halfnsamp_window;
+                startSample = Math.max(0,rightSample - halfnsamp_window);
+                //endSample = leftSample + halfnsamp_window;
 
                 if (method < FCC_NORMAL) {
                     for (j = 1, i = startSample; j <= nsamp_window; j++, i++) {
@@ -534,6 +536,7 @@ public class PitchExtractor extends SampledDataAnalyzer {
              */
 
             if (localPeak == 0.0) {
+                pitchFrames.add(pitchFrame);
                 continue;
             }
 
@@ -542,9 +545,9 @@ public class PitchExtractor extends SampledDataAnalyzer {
              * and register them as candidates.
              */
 
-            imax[0] = 1;
+            imax[1] = 0;
             
-            for (i = 2; i < maximumLag && i < brent_ixmax; i++) {
+            for (i = 1; i < maximumLag && i < brent_ixmax; i++) {
                 if (r.get(i) > 0.5 * voicingThreshold
                         && /* Not too unvoiced? */ r.get(i) > r.get(i - 1) && r.get(i) >= r.get(i + 1)) /* Maximum? */ {
                     int place = 0;
@@ -576,17 +579,17 @@ public class PitchExtractor extends SampledDataAnalyzer {
                      * Find a place for this maximum.
                      */
                     if (pitchFrame.getNumCandidates() < maxnCandidates) { /* Is there still a free place? */
-                        place = pitchFrame.getNumCandidates() + 1;
+                        place = pitchFrame.getNumCandidates();
                         pitchFrame.addCandidate();
                     } else {
                         /* Try the place of the weakest candidate so far. */
-                        double weakest = 2;
+                        double weakest = 1;
                         int iweak;
-                        for (iweak = 2; iweak <= maxnCandidates; iweak++) {
+                        for (iweak = 1; iweak < maxnCandidates; ++iweak) {
                             /* High frequencies are to be favoured */
                             /* if we want to analyze a perfectly periodic signal correctly. */
-                            double localStrength = pitchFrame.getCandidate(iweak - 1).strength - octaveCost
-                                    * Math.log(minimumPitch / pitchFrame.getCandidate(iweak - 1).frequency) / Math.log(2);
+                            double localStrength = pitchFrame.getCandidate(iweak).strength - octaveCost
+                                    * Math.log(minimumPitch / pitchFrame.getCandidate(iweak).frequency) / Math.log(2);
                             if (localStrength < weakest) {
                                 weakest = localStrength;
                                 place = iweak;
@@ -594,14 +597,14 @@ public class PitchExtractor extends SampledDataAnalyzer {
                         }
                         /* If this maximum is weaker than the weakest candidate so far, give it no place. */
                         if ((strengthOfMaximum - octaveCost * (Math.log(minimumPitch / frequencyOfMaximum) / Math.log(2))) <= weakest) {
-                            place = 0;
+                            place = -1;
                         }
                     }
                     /* Have we found a place for this candidate? */
-                    if (place != 0) {
-                        pitchFrame.getCandidate(place - 1).frequency = frequencyOfMaximum;
-                        pitchFrame.getCandidate(place - 1).strength = strengthOfMaximum;
-                        imax[place - 1] = i;
+                    if (place >= 0) {
+                        pitchFrame.getCandidate(place).frequency = frequencyOfMaximum;
+                        pitchFrame.getCandidate(place).strength = strengthOfMaximum;
+                        imax[place] = i;
                     }
                 }
             }
