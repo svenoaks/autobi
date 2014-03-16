@@ -200,6 +200,7 @@ public class PitchExtractor extends SampledDataAnalyzer {
 
 
         duration = wav.getDuration();
+        System.err.println(duration);
         if (minimumPitch < periodsPerWindow / duration) {
             throw new AuToBIException("For this Sound, the parameter 'minimum pitch' may not be less than "
                     + (periodsPerWindow / duration) + " Hz.");
