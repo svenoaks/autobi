@@ -559,7 +559,7 @@ public class PitchExtractor extends SampledDataAnalyzer {
                     //   o -brent_ixmax -1?????
 
                     
-                    int offset = -brent_ixmax - 1;
+                    int offset = - brent_ixmax -1;
                     
                     
                     double strengthOfMaximum = /* method & 1 ? */
