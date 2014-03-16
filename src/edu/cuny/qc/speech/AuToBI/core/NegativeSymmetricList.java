@@ -36,11 +36,16 @@ public class NegativeSymmetricList extends ArrayList<Double> {
    * @return the associated value
    */
   public Double get(int i) {
-    if (i >= 0) {
-      return super.get(i);
-    } else {
-      return super.get(-i);
-    }
+      try{
+        if (i >= 0) {
+         return super.get(i);
+        } else {
+        return super.get(-i);
+        }
+      }catch(Exception e){
+          e.printStackTrace();
+      }
+      return super.get(0);
   }
 
   /**
